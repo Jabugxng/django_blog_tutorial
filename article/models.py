@@ -12,13 +12,14 @@ from taggit.managers import TaggableManager
 # 处理图片
 from PIL import Image
 
+
 class ArticleColumn(models.Model):
     """
-    文章栏目的 Model
+    文章栏目
     """
     # 栏目标题
     title = models.CharField(max_length=100, blank=True)
-    
+
     # 创建时间
     created = models.DateTimeField(default=timezone.now)
 
@@ -30,7 +31,7 @@ class ArticleColumn(models.Model):
 # 建立博客文章类 class Article，处理与文章有关的数据，它包含需要的字段和保存数据的行为
 class ArticlePost(models.Model):
     """
-    文章的 Model
+    文章
     """
 
     # 定义文章作者。 author 通过 models.ForeignKey 外键与内建的 User 模型关联在一起
@@ -80,14 +81,14 @@ class ArticlePost(models.Model):
     # 内部类 class Meta 用于给 model 定义元数据
     # 元数据：不是一个字段的任何数据
     class Meta:
-    	# ordering 指定模型返回的数据的排列顺序
-    	# '-created' 表明数据应该以倒序排列
+        # ordering 指定模型返回的数据的排列顺序
+        # '-created' 表明数据应该以倒序排列
         ordering = ('-created',)
 
     # 函数 __str__ 定义当调用对象的 str() 方法时的返回值内容
     # 它最常见的就是在Django管理后台中做为对象的显示值。因此应该总是为 __str__ 返回一个友好易读的字符串
     def __str__(self):
-    	# 将文章标题返回
+        # 将文章标题返回
         return self.title
 
     # 获取文章地址
@@ -105,7 +106,7 @@ class ArticlePost(models.Model):
             (x, y) = image.size
             new_x = 400
             new_y = int(new_x * (y / x))
-            resized_image = image.resize((new_x, new_y), Image.ANTIALIAS)
+            resized_image = image.resize((new_x, new_y), Image.LANCZOS)
             resized_image.save(self.avatar.path)
 
         return article
@@ -113,7 +114,7 @@ class ArticlePost(models.Model):
     def was_created_recently(self):
         # 若文章是 1 分钟内发表的，则返回 True
         diff = timezone.now() - self.created
-        
+
         # if diff.days <= 0 and diff.seconds < 60:
         if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
             return True

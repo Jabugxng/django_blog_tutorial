@@ -1,7 +1,7 @@
 # 引入表单类
 from django import forms
 # 引入文章模型
-from .models import ArticlePost
+from .models import ArticlePost, ArticleColumn
 
 
 # 写文章的表单类

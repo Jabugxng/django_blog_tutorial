@@ -26,6 +26,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView
 
+
 # from my_blog.settings import LOGGING
 # import logging
 
@@ -67,7 +68,7 @@ def article_list(request):
         # 按热度排序博文
         article_list = article_list.order_by('-total_views')
 
-    # 每页显示 1 篇文章
+    # 每页显示 3 篇文章
     paginator = Paginator(article_list, 3)
     # 获取 url 中的页码
     page = request.GET.get('page')
@@ -91,7 +92,7 @@ def article_detail(request, id):
     # article = ArticlePost.objects.get(id=id)
     # logger.warning('Something went wrong!')
     article = get_object_or_404(ArticlePost, id=id)
-    
+
     # 取出文章评论
     comments = Comment.objects.filter(article=id)
 
@@ -112,16 +113,15 @@ def article_detail(request, id):
     else:
         next_article = None
 
-
     # Markdown 语法渲染
     md = markdown.Markdown(
         extensions=[
-        # 包含 缩写、表格等常用扩展
-        'markdown.extensions.extra',
-        # 语法高亮扩展
-        'markdown.extensions.codehilite',
-        # 目录扩展
-        'markdown.extensions.toc',
+            # 包含 缩写、表格等常用扩展
+            'markdown.extensions.extra',
+            # 语法高亮扩展
+            'markdown.extensions.codehilite',
+            # 目录扩展
+            'markdown.extensions.toc',
         ]
     )
     article.body = md.convert(article.body)
@@ -130,7 +130,7 @@ def article_detail(request, id):
     comment_form = CommentForm()
 
     # 需要传递给模板的对象
-    context = { 
+    context = {
         'article': article,
         'toc': md.toc,
         'comments': comments,
@@ -174,7 +174,7 @@ def article_create(request):
         # 文章栏目
         columns = ArticleColumn.objects.all()
         # 赋值上下文
-        context = { 'article_post_form': article_post_form, 'columns': columns }
+        context = {'article_post_form': article_post_form, 'columns': columns}
         # 返回模板
         return render(request, 'article/create.html', context)
 
@@ -211,7 +211,7 @@ def article_safe_delete(request, id):
 def article_update(request, id):
     """
     更新文章的视图函数
-    通过POST方法提交表单，更新titile、body字段
+    通过POST方法提交表单，更新title、body字段
     GET方法进入初始表单页面
     id： 文章的 id
     """
@@ -258,8 +258,8 @@ def article_update(request, id):
         # 文章栏目
         columns = ArticleColumn.objects.all()
         # 赋值上下文，将 article 文章对象也传递进去，以便提取旧的内容
-        context = { 
-            'article': article, 
+        context = {
+            'article': article,
             'article_post_form': article_post_form,
             'columns': columns,
             'tags': ','.join([x for x in article.tags.names()]),
@@ -289,11 +289,11 @@ def article_list_example(request):
         return render(request, 'article/list.html', context)
 
 
-
 class ContextMixin:
     """
     Mixin
     """
+
     def get_context_data(self, **kwargs):
         # 获取原有的上下文
         context = super().get_context_data(**kwargs)
@@ -315,7 +315,8 @@ class ArticleListView(ContextMixin, ListView):
         """
         查询集
         """
-        queryset = ArticlePost.objects.filter(title='Python')
+        # queryset = ArticlePost.objects.filter(title='Python')
+        queryset = ArticlePost.objects.all()
         return queryset
 
 
